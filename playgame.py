@@ -13,6 +13,7 @@ BASE_URL = "http://quotes.toscrape.com"
 def readQuotes(fileName):
     with open(fileName, 'r')as file:
         csvReader = DictReader(file)
+        csvReader = list(csvReader)
         return csvReader
         # for quote in csvReader:
         #     return quote
@@ -38,25 +39,27 @@ def playGame(allQuotes):
         if guess.lower() == selectQuote["author"].lower():
             print('Correct!!')
         else:
-            if totalChances == 3:
-                authorAddress = requests.get(
-                    f"{BASE_URL}{selectQuote['bio-link']}")
-                authorInfo = BeautifulSoup(authorAddress.text, "html.parser")
-                bornDate = authorInfo.find(
-                    class_="author-born-date").get_text()
-                bornLocation = authorInfo.find(
-                    class_="author-born-location").get_text()
-                print(f"Hint: Author is born on {bornDate} {bornLocation}")
-            elif totalChances == 2:
-                print(
-                    f"Author first name first letter is {selectQuote['author'][0][0]}")
-            elif totalChances == 1:
-                print(
-                    f"Author Last name first letter is {selectQuote['author'].split(' ')[1][0]}")
-            else:
-                print(
-                    f"Chances are out. Author name  is {selectQuote['author'].lower()}")
-
+            def hintMsg(selectQuote, totalChances):
+                if totalChances == 3:
+                    authorAddress = requests.get(
+                        f"{BASE_URL}{selectQuote['bio-link']}")
+                    authorInfo = BeautifulSoup(
+                        authorAddress.text, "html.parser")
+                    bornDate = authorInfo.find(
+                        class_="author-born-date").get_text()
+                    bornLocation = authorInfo.find(
+                        class_="author-born-location").get_text()
+                    print(f"Hint: Author is born on {bornDate} {bornLocation}")
+                elif totalChances == 2:
+                    print(
+                        f"Author first name first letter is {selectQuote['author'][0][0]}")
+                elif totalChances == 1:
+                    print(
+                        f"Author Last name first letter is {selectQuote['author'].split(' ')[1][0]}")
+                else:
+                    print(
+                        f"Chances are out. Author name  is {selectQuote['author'].lower()}")
+            hintMsg(selectQuote, totalChances)
 # Forget the actual reason to return False
 # return False
 
